@@ -1,7 +1,7 @@
 import  express  from "express";
 
-import {createTodo,updateTodo,deleteTodo,login,getAllTodos,getTodoById} from "../controller/userController"
-
+import {createTodo,updateTodo,deleteTodo,login,getAllTodos,getTodoById} from "../controller/userController";
+import { validation } from "../middleware/jwt";
 
 const router:express.Router = express.Router();
 
@@ -23,14 +23,14 @@ router.post("/login",login)
 @usage: Read all user from database
 @url:   http://localhost:3000/user/read
  */
-router.get("/read", getAllTodos);
+router.get("/read",validation, getAllTodos);
 
 /*
 @usage: Read by id
 @url:   http://localhost:3000/user/readby/:id
 @fields:id
  */
-router.get("/readby/:id", getTodoById);
+router.get("/readby",validation, getTodoById);
 
 /*
 @usage: update the user

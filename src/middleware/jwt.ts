@@ -1,22 +1,24 @@
 import jwt, { JwtPayload } from 'jsonwebtoken';
-import { Request, Response, NextFunction } from 'express';
+import {Request,Response,NextFunction } from 'express';
+import AppError from '../utils/appError';
 
-
-interface MyJwtPayload extends JwtPayload {
-    id: number;
+declare module "express" {
+  interface Request {
+      id?: number;
   }
-  
-export const validation = (req: MyJwtPayload, res: Response, next: NextFunction) => {
+}
+export const validation = (req:Request, res:Response, next:NextFunction) => {
   const token: string | undefined = req.header('token');
 
   if (!token) {
-    return res.status(404).json({ message: 'Invalid token' });
+    throw new AppError(400, 'Invalid Token');
   }
 
   try {
-    const decoded = jwt.verify(token, 'key') as MyJwtPayload;
+    const decoded: JwtPayload = jwt.verify(token, 'key') as JwtPayload;
+    req.id=decoded.id;
     next();
   } catch (error) {
-    return res.status(401).json({ message: 'Failed to authenticate token' });
+    throw new AppError(403, 'Access Denied');
   }
 };
